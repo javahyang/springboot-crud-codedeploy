@@ -9,6 +9,15 @@ on:
 # 수동 실행
   workflow_dispatch:
 
+# github-actions 스크립트에서 사용할 변수 설정
+env:
+  PROJECT_NAME: springboot-crud-codedeploy
+  S3_BUCKET_NAME: ${{ secrets.SANDBOX_S3_BUCKET_NAME }}
+  # S3 버킷 생성한 AWS 리전
+  AWS_REGION: ap-northeast-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.SANDBOX_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
+  
 jobs:
   build:
   # 어떤 OS 환경에서 실행할지 지정하는 runs-on
@@ -38,4 +47,23 @@ jobs:
     # gradlew로 프로젝트 build
       - name: Build with Gradle
         run: ./gradlew build
+        shell: bash
+        
+    # 프로젝트 전체를 zip 파일로 압축
+    # $GITHUB_SHA : 깃헙액션에서 제공하는 환경변수로 현재 workflow를 실행시키는 커밋의 해쉬값
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+    # S3, CodeDeploy 권한있는 aws 사용자 계정 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+    # aws cli 명령어로 s3에 zip 파일로 압축한 jar 파일 업로드
+      - name: Upload to S3
+        run: aws s3 cp --region ${{ env.AWS_REGION }} ./$GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.PROJECT_NAME }}/$GITHUB_SHA.zip
         shell: bash
