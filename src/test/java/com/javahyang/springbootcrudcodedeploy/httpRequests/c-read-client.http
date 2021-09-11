@@ -1,0 +1,3 @@
+GET /clients/{{id}}
+Host: {{host}}
+Content-Type: application/json

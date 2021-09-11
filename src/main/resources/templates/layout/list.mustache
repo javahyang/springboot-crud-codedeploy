@@ -1,0 +1,21 @@
+<table class="table table-horizontal table-bordered">
+    <thead class="thead-strong">
+    <tr>
+        <th>ID</th>
+        <th>이름</th>
+        <th>이메일</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+    {{#clients}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{email}}</td>
+            <td><a href="/client/{{id}}" role="button" class="btn btn-primary">수정</a> <a
+                    href="javascript:index.remove('{{id}}');" role="button" class="btn btn-danger">삭제</a></td>
+        </tr>
+    {{/clients}}
+    </tbody>
+</table>

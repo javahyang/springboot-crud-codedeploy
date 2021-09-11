@@ -1,0 +1,5 @@
+PUT /clients/{{id}}
+Host: {{host}}
+Content-Type: application/json
+
+< ./fixtures/update-client.json

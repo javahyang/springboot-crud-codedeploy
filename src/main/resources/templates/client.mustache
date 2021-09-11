@@ -1,0 +1,46 @@
+{{>layout/header}}
+{{#client}}
+    <h1>고객 수정</h1>
+{{/client}}
+{{^client}}
+    <h1>고객 등록</h1>
+{{/client}}
+<div class="col-md-12">
+    <div class="col-md-4">
+        <form>
+            {{#client}}
+                <div class="form-group">
+                    <label for="id"> 아이디 </label>
+                    <input type="text" class="form-control" id="id" value="{{client.id}}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="name"> 이름 </label>
+                    <input type="text" class="form-control" id="name" value="{{client.name}}" placeholder="이름을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="email"> 이메일 </label>
+                    <input type="text" class="form-control" id="email" value="{{client.email}}"
+                           placeholder="이메일을 입력하세요">
+                </div>
+            {{/client}}
+            {{^client}}
+                <div class="form-group">
+                    <label for="name"> 이름 </label>
+                    <input type="text" class="form-control" id="name" placeholder="이름을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="email"> 이메일 </label>
+                    <input type="text" class="form-control" id="email" placeholder="이메일을 입력하세요">
+                </div>
+            {{/client}}
+        </form>
+        <a href="/" role="button" class="btn btn-secondary">취소</a>
+        {{#client}}
+            <button type="button" class="btn btn-primary" id="btn-update">수정</button>
+        {{/client}}
+        {{^client}}
+            <button type="button" class="btn btn-primary" id="btn-save">등록</button>
+        {{/client}}
+    </div>
+</div>
+{{>layout/footer}}
