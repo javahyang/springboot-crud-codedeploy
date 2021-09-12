@@ -11,6 +11,8 @@ on:
 
 # github-actions 스크립트에서 사용할 변수 설정
 env:
+  # CodeDeploy 배포 그룹 이름
+  ACTIVE: sandbox
   PROJECT_NAME: springboot-crud-codedeploy
   S3_BUCKET_NAME: ${{ secrets.SANDBOX_S3_BUCKET_NAME }}
   # S3 버킷 생성한 AWS 리전
@@ -66,4 +68,9 @@ jobs:
     # aws cli 명령어로 s3에 zip 파일로 압축한 jar 파일 업로드
       - name: Upload to S3
         run: aws s3 cp --region ${{ env.AWS_REGION }} ./$GITHUB_SHA.zip s3://${{ env.S3_BUCKET_NAME }}/${{ env.PROJECT_NAME }}/$GITHUB_SHA.zip
+        shell: bash
+        
+    # CodeDeploy 배포 실행
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ env.PROJECT_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.ACTIVE }} --s3-location bucket=${{ env.S3_BUCKET_NAME }},bundleType=zip,key=${{ env.PROJECT_NAME }}/$GITHUB_SHA.zip
         shell: bash
