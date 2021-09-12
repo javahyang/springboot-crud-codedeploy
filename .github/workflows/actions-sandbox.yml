@@ -51,10 +51,22 @@ jobs:
         run: ./gradlew build
         shell: bash
         
-    # 프로젝트 전체를 zip 파일로 압축
+    # 필요한 파일들만 before-deploy 폴더로 이동
+    # 프로그램을 실행하는 jar 파일
+    # CodeDeploy Agent 실행에 필수적인 appspec.yml 파일
+      - name: Before jar deploy
+        run: mkdir -p before-deploy/build && cp build/libs/*.jar before-deploy/build/ && cp appspec.yml before-deploy/
+        shell: bash
+
+    # 배포스크립트 파일
+      - name: Before sh deploy
+        run: mkdir -p before-deploy/sh && cp sh/*.sh before-deploy/sh/
+        shell: bash
+        
+    # before-deploy 폴더를 zip 파일로 압축
     # $GITHUB_SHA : 깃헙액션에서 제공하는 환경변수로 현재 workflow를 실행시키는 커밋의 해쉬값
       - name: Make zip file
-        run: zip -r ./$GITHUB_SHA.zip .
+        run: zip -r $GITHUB_SHA.zip ./before-deploy/*
         shell: bash
 
     # S3, CodeDeploy 권한있는 aws 사용자 계정 설정
